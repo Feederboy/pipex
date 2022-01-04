@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/23 13:36:57 by maquentr          #+#    #+#             */
-/*   Updated: 2021/12/23 13:43:13 by maquentr         ###   ########.fr       */
+/*   Created: 2021/12/23 18:40:32 by matt              #+#    #+#             */
+/*   Updated: 2021/12/23 18:40:41 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PIPEX_H
-# define FT_PIPEX_H
+#include "pipex.h"
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdlib.h>
+int	ft_strlen(const char *str)
+{
+	int i;
 
-
-
-
-
-#endif
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
