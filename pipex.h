@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 13:56:20 by matt              #+#    #+#             */
-/*   Updated: 2021/12/23 18:47:09 by matt             ###   ########.fr       */
+/*   Updated: 2022/01/04 14:29:49 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_join(char const *s1, char const *s2);
 char	**ft_split(const char *s, char c);
 char	*ft_substr(const char *s, unsigned int start, size_t len);
 int		ft_strlen(const char *str);
