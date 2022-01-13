@@ -6,7 +6,7 @@
 #    By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/02 13:05:22 by maquentr          #+#    #+#              #
-#    Updated: 2022/01/04 14:30:02 by maquentr         ###   ########.fr        #
+#    Updated: 2022/01/07 09:36:39 by matt             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME=pipex
@@ -20,10 +20,7 @@ RM=rm -f
 INC=pipex.h
 
 SRC=ft_split.c \
-	ft_strlen.c \
-	ft_strjoin.c \
-	ft_join.c \
-	ft_substr.c \
+	utils.c \
 	main.c
 
 OBJ=$(SRC:.c=.o)

@@ -6,135 +6,127 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 13:47:48 by maquentr          #+#    #+#             */
-/*   Updated: 2022/01/04 15:46:55 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/01/13 15:27:32 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-/*
-void child_one_process(int fd, char **mypaths, char *cmd1)
+
+void child_process(int fd[2], char **av, char **envp)
 {
 	int i;
-	char *cmd;
+	char **cmd;
+	char **mypaths;
+	int infile_fd;
+	char **mycmdargs;
 
+
+	close(fd[0]);
+	infile_fd = open(av[1], O_RDONLY, 0777);
+	if (infile_fd == -1)
+		printf("no such file or directory\n");
+	dup2(fd[1], STDOUT_FILENO);
+	dup2(infile_fd, STDIN_FILENO);
+	close(infile_fd);
+	close(fd[1]);
+	cmd = get_args(av);
+	mycmdargs = ft_split(av[2], ' ');
+	mypaths = get_path(envp);
 	i = -1;
 	while (mypaths[++i])
 	{
-		cmd = ft_join(mypaths[i], cmd1); //protect ft_join
-		execve(cmd, mycmdargs, envp); //add perror("ERROR") to debug
-		free(cmd);
+		cmd[i] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
+		execve(cmd[i], mycmdargs, envp); //add perror("ERROR") to debug
 	}
-
 }
-
-void parent_process(int f2, char *cmd2)
+void parent_process(int ac, char **av, char **envp, int fd[2])
 {
-}
-
-void pipex(char **envp, char **mycmdargs, char **mypaths)
-{
-	int fd[2];
-	int status;
-	pid_t child1;
-	pid_t child2;
-
-
-	pipe(fd); // a proteger
-	child1 = fork;
-	if (child1 < 0)
-		return (perror("Fork: "));
-	if (child1 == 0)
-		child_one_process(f1, cmd1);
-	else
-		parent_process(f2, cmd2);
-}
-*/
-
-
-//ENVOYER FD, AV ET ENVP DANS LES FCT AUXILLIAIRES ET TRAITER LA BAS LA MERDE
-//
-//
-//
-//
-//
-int main(int ac, char **av, char **envp)
-{
-	char *path_from_envp;
+	int	outfile_fd;
+	char **cmd;
 	char **mypaths;
+	int i;
 	char **mycmdargs;
-	int len = ft_strlen(envp[0]);
-//	char *tmp;
-	char *cmd;
-	int j = -1;
+
+	mycmdargs = ft_split(av[3], ' ');
+
+	close(fd[1]);
+	outfile_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (outfile_fd == -1)
+		printf("No such file or directoty\n");
+	dup2(fd[0], STDIN_FILENO);
+	dup2(outfile_fd, STDOUT_FILENO);
+	close(outfile_fd);
+	close(fd[1]);
+	close(fd[0]);
+	cmd = get_args(av);
+	mypaths = get_path(envp);
+	i = -1;
+	while (mypaths[++i])
+	{
+		cmd[i] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
+		execve(cmd[i], mycmdargs, envp); //add perror("ERROR") to debug
+	}
+}
+
+char	**get_path(char *envp[])
+{
+	int i;
+	int j;
+	char *paths;
+	char **mypaths;
+
+	j = -1;
 	while (envp[++j])
 	{
-		printf("envp ===== %s\n", envp[j]);
+		if (ft_strnstr(envp[j], "PATH=", 9999))
+			break;
 	}
+	paths = envp[j];
 
-	if (ac != 5)
-	{
-		printf("wrong number of arguments\n");
-		return (-1);
-	}
-	path_from_envp = ft_substr(*envp, 1, len); //a completer ; substr n'est peut etre pas la meilleure fct pour aller choper le path. A mediter
-		printf("envp = %s\n", path_from_envp);
-	mypaths = ft_split(path_from_envp, ':'); // as for splitting the envp path, print out the result of your split and have a look. Add / at the end for the path to work correctly
+	paths = ft_substr(paths, 5, ft_strlen(paths));
+	mypaths = ft_split(paths, ':');
 
-	int i = 0;
-	while (mypaths[i])
-	{
-		printf("mypath = %s\n", mypaths[i]);
-		i++;
-	}
+	i = 0;
 	i = -1;
 	while (mypaths[++i]) //adding '/' at the end of the path for it to work correctly
 	{
 		mypaths[i] = ft_join(mypaths[i], "/");
 	}
 	i = -1;
-	while (mypaths[++i])
-	{
-		printf("mypath correct path = %s\n", mypaths[i]);
-	}
+	free(paths);
+	return (mypaths);
+}
 
+char **get_args(char **av)
+{
+	char **mycmdargs;
 
-
-	/*
-	i = 2;
-	tmp = av[1];
-	while (av[i]) //PROBABLY USELESS
-	{
-		tmp = ft_strjoin(tmp, av[i]); //ATTENTION si des ' " ' etc sont inclues dans les arguments
-		i++;
-	}
-	printf("tmp = %s\n", tmp);
-	*/
-	//IMO better to join all av[1] to av[5] with a space in between each -- ERRATUM no bc arg ls -la is one signe argument then the split will make it two arguments
-	
 
 	mycmdargs = ft_split(av[2], ' '); //split bugged if no entry given
 	
-	printf("av[0] = %s\n", av[0]);
-	printf("av[1] = %s\n", av[1]);
-	printf("av[2] = %s\n", av[2]);
-	printf("av[3] = %s\n", av[3]);
-	printf("av[4] = %s\n", av[4]);
-	i = 0;
-	while (mycmdargs[i])
-	{
-		printf("mycmdargs[%d] = %s\n", i, mycmdargs[i]);
-		i++;
-	}
-//	pipex(envp, mycmdargs, mypaths);
+	return (mycmdargs);
+}
 
-	i = -1;
-	while (mypaths[++i])
+int main(int ac, char **av, char **envp)
+{
+	int fd[2];
+	int pid;
+
+
+	if (ac == 5)
 	{
-		cmd = ft_join(mypaths[i], av[2]); //protect ft_join  ---- only assigns the last mypaths[i] to ftg, we need all paths
-	execve(cmd, mycmdargs, envp);
-	free(cmd);
+		if (pipe(fd) == -1)
+			perror("ERROR WHILE CALLING PIPE");
+		pid = fork();
+		if (pid == -1)
+			perror("ERROR WHILE CALLING FORK");
+		if (pid == 0)
+			child_process(fd, av, envp);
+		else
+			parent_process(ac, av, envp, fd);
 	}
-	
+	else
+		perror("ERROR: check arguments\nusage: .pipex <infile> <cmd1> <cmd2> <outfile>");
 	return (0);
 }
 
