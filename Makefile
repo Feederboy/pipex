@@ -6,7 +6,7 @@
 #    By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/02 13:05:22 by maquentr          #+#    #+#              #
-#    Updated: 2022/01/07 09:36:39 by matt             ###   ########.fr        #
+#    Updated: 2022/01/18 11:21:55 by maquentr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME=pipex
@@ -25,7 +25,6 @@ SRC=ft_split.c \
 
 OBJ=$(SRC:.c=.o)
 
-
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< $(INC)
 
@@ -38,7 +37,7 @@ bonus:
 	@make	all	OBJ="$(OBJ)"
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) pipex
 
 fclean: clean
 	$(RM) $(NAME)
