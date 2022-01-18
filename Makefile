@@ -6,14 +6,14 @@
 #    By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/02 13:05:22 by maquentr          #+#    #+#              #
-#    Updated: 2022/01/18 11:21:55 by maquentr         ###   ########.fr        #
+#    Updated: 2022/01/18 16:46:06 by maquentr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME=pipex
 
 CC=gcc
 
-CFLAGS=-Wall -Wextra -Werror
+CFLAGS=-Wall -Wextra  -fsanitize=address
 
 RM=rm -f
 
@@ -29,8 +29,7 @@ OBJ=$(SRC:.c=.o)
 	$(CC) $(CFLAGS) -c $< $(INC)
 
 $(NAME): $(OBJ)
-	ar rcs	$(NAME)	$(OBJ)
-
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(INC)
 all: $(NAME)
 
 bonus:
