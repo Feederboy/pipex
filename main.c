@@ -6,12 +6,12 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 13:47:48 by maquentr          #+#    #+#             */
-/*   Updated: 2022/01/18 16:56:59 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/01/19 18:36:47 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
+/*
 void free_all(char **str)
 {
 	int i;
@@ -23,6 +23,7 @@ void free_all(char **str)
 		i++;
 	}
 }
+*/
 void child_process(int fd[2], char **av, char **envp)
 {
 	int i;
@@ -30,33 +31,46 @@ void child_process(int fd[2], char **av, char **envp)
 	char **mypaths;
 	int infile_fd;
 	char **mycmdargs;
-	char *tmp;
-
 
 	close(fd[0]);
 	infile_fd = open(av[1], O_RDONLY, 0777); //add protection
-	if (infile_fd == -1)
-		return (perror("Error "));
+//	if (infile_fd == -1)
+//		return (perror("Error "));
+	if (av[2] == NULL)
+		exit(EXIT_FAILURE);
 	dup2(fd[1], STDOUT_FILENO); //add protection
 	dup2(infile_fd, STDIN_FILENO); //add protection
 	close(infile_fd);
 	close(fd[1]);
 	cmd = ft_split(av[2], ' ');
 	if (cmd == NULL)
-		write(2, "NTM\n", 4);
+		exit(EXIT_FAILURE);
 	mycmdargs = ft_split(av[2], ' ');
+	if (mycmdargs == NULL)
+		exit(EXIT_FAILURE);
 	mypaths = get_path(envp);
+	if(!(mypaths))
+		exit(EXIT_FAILURE);
+	int j;
+	j = -1;
+	while(cmd[++j])
+	{
+		i = -1;
+		while (mypaths[++i])
+		{
+			cmd[j] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
+			execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
+		}
+	}
+
+	/*
 	i = -1;
 	while (mypaths[++i])
 	{
-		cmd[i] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
-		tmp = cmd[i];
-		free(cmd[i]);
-		execve(tmp, mycmdargs, envp); //add perror("ERROR") to debug
+			cmd[i] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
+			execve(cmd[i], mycmdargs, envp); //add perror("ERROR") to debug
 	}
-	free_all(cmd);
-	free_all(mycmdargs);
-	free_all(mypaths);
+	*/
 }
 void parent_process(int ac, char **av, char **envp, int fd[2])
 {
@@ -65,12 +79,17 @@ void parent_process(int ac, char **av, char **envp, int fd[2])
 	char **mypaths;
 	int i;
 	char **mycmdargs;
-	char *tmp;
 
+
+	if (av[3] == NULL)
+		exit(EXIT_FAILURE);
 	mycmdargs = ft_split(av[3], ' ');
-
+	if (mycmdargs == NULL)
+		exit(EXIT_FAILURE);
 	close(fd[1]);
 	outfile_fd = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777); //add protection
+//	if (outfile_fd == -1)
+//		return (perror("Error "));
 	dup2(fd[0], STDIN_FILENO); //add protection
 	dup2(outfile_fd, STDOUT_FILENO); //add protection
 	close(outfile_fd);
@@ -78,19 +97,33 @@ void parent_process(int ac, char **av, char **envp, int fd[2])
 	close(fd[0]);
 	cmd = ft_split(av[3], ' ');
 	if (cmd == NULL)
-		write(2, "hehey\n", 7);
+		exit(EXIT_FAILURE);
 	mypaths = get_path(envp);
-	i = -1;
-	while (mypaths[++i])
+	if (!(mypaths))
+		exit(EXIT_FAILURE);
+
+	int j;
+	j = -1;
+	while(cmd[++j])
 	{
-		cmd[i] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
-		tmp = cmd[i];
-		free(cmd[i]);
-		execve(cmd[i], mycmdargs, envp); //add perror("ERROR") to debug
+		i = -1;
+		while (mypaths[++i])
+		{
+			cmd[j] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
+			execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
+		}
 	}
-	free_all(cmd);
-	free_all(mycmdargs);
-	free_all(mypaths);
+			
+/*
+	i = -1;
+	while (mypaths[++i]) //ICI ON VA TROP LOIN DANS CMD DOU LE HEAP BUFFER OVERFLOW
+	{
+				cmd[i]= ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
+				execve(cmd[i], mycmdargs, envp); //add perror("ERROR") to debug
+	}
+*/
+
+
 }
 
 char	**get_path(char *envp[])
@@ -99,27 +132,19 @@ char	**get_path(char *envp[])
 	int j;
 	char *paths;
 	char **mypaths;
-	char*tmp;
-
 	j = -1;
 	while (envp[++j])
 	{
 		if (ft_strnstr(envp[j], "PATH=", 5))
 			break;
 	}
-	paths = envp[j] + 5;
-	//paths = ft_substr(paths, 5, ft_strlen(paths));
-	mypaths = ft_split(paths, ':');
-//	free(paths);
-	if (!(mypaths))
-		return (NULL);
-
+	paths = envp[j] + 5; //removing "PATH=" from the string
+	if (!(mypaths = ft_split(paths, ':')))
+			exit(EXIT_FAILURE);
 	i = -1;
 	while (mypaths[++i]) //adding '/' at the end of the path for it to work correctly
 	{
-		tmp = ft_join(mypaths[i], "/");
-		free(mypaths[i]);
-		mypaths[i] = tmp;
+		mypaths[i] = ft_join(mypaths[i], "/");
 		printf("paths[i] = %s\n", mypaths[i]);
 	}
 	return (mypaths);
@@ -129,7 +154,8 @@ char **get_args(char **av)
 {
 	char **mycmdargs;
 
-	mycmdargs = ft_split(av[2], ' ');	//split bugged if no entry given
+	if (!(mycmdargs = ft_split(av[2], ' ')))	//split bugged if no entry given
+		exit(EXIT_FAILURE);
 	return (mycmdargs);
 }
 
