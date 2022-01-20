@@ -6,13 +6,12 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 18:36:18 by matt              #+#    #+#             */
-/*   Updated: 2022/01/18 16:35:44 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/01/20 10:59:17 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-/*
 static int		count_words(char const *str, char c)
 {
 	int	words;
@@ -101,7 +100,6 @@ char			**ft_split(char const *s, char c)
 	return (result);
 }
 
-*/
 
 
 /*
@@ -178,7 +176,6 @@ char			**ft_split(const char *s, char c)
 	res[i] = NULL;
 	return (res);
 }
-*/
 
 
 static	int	ft_issep(char s, char c)
@@ -265,3 +262,4 @@ char	**ft_split(char const *s, char c)
 	}
 	return (dst);
 }
+*/
