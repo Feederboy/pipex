@@ -6,7 +6,7 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 13:47:48 by maquentr          #+#    #+#             */
-/*   Updated: 2022/01/20 15:22:36 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:54:23 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,33 @@
 
 void	free_all(char **str)
 {
-	while (*str++)
-		free(*str);
+	int i;
+
+	i = -1;
+	while (str[++i])
+		free(str[i]);
 }
 
 
 void child_process(int fd[2], char **av, char **envp)
 {
+	int j;
 	int i;
+	int infile_fd;
 	char **cmd;
 	char **mypaths;
-	int infile_fd;
 	char **mycmdargs;
 
 	close(fd[0]);
 	infile_fd = open(av[1], O_RDONLY, 0777); //add protection
 	if (infile_fd == -1)
 		return (perror("Error "));
-	if (av[2] == NULL)
-		exit(EXIT_FAILURE);
 	dup2(fd[1], STDOUT_FILENO); //add protection
 	dup2(infile_fd, STDIN_FILENO); //add protection
 	close(infile_fd);
 	close(fd[1]);
+	
 	cmd = ft_split(av[2], ' ');
-	if (av[2] == NULL)
-		return ;
 	if (cmd == NULL)
 		return ;
 	mycmdargs = ft_split(av[2], ' ');
@@ -48,9 +49,6 @@ void child_process(int fd[2], char **av, char **envp)
 	mypaths = get_path(envp);
 	if(!(mypaths))
 		exit(EXIT_FAILURE);
-	int j;
-
-	int tmp;
 
 	j = -1;
 	while(cmd[++j]) //USE FONCTION ACCESS POUR CHECK SI LA CMD EXIST ET LENVOYER A EXECVE
@@ -58,42 +56,24 @@ void child_process(int fd[2], char **av, char **envp)
 		i = -1;
 		while (mypaths[++i])
 		{
+			printf("BJR\n");
 			cmd[j] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
-			if ((tmp = access(cmd[j], X_OK)) == 0)
-				break ;
-			free(cmd[j]);
+			if (access(cmd[j], X_OK) == 0)
+				execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
+			else
+				free(mypaths[i]);
 		}
-		if (tmp == -1)
-		{
-			write(2, "invalid cmd child\n", 18);
-			free_all(cmd);
-			free_all(mycmdargs);
-			free_all(mypaths);
-			exit(EXIT_FAILURE);
-		}
-		execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
+		free(cmd[j]);
 	}
-/*
-	j = -1;
-	while(cmd[++j]) //USE FONCTION ACCESS POUR CHECK SI LA CMD EXIST ET LENVOYER A EXECVE
-	{
-		i = -1;
-		while (mypaths[++i])
-		{
-			cmd[j] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
-			execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
-		}
-	}
-
-	*/
 }
 
 void parent_process(int ac, char **av, char **envp, int fd[2])
 {
 	int	outfile_fd;
+	int j;
+	int i;
 	char **cmd;
 	char **mypaths;
-	int i;
 	char **mycmdargs;
 
 
@@ -118,41 +98,21 @@ void parent_process(int ac, char **av, char **envp, int fd[2])
 	if (!(mypaths))
 		exit(EXIT_FAILURE);
 
-	int j;
-	int tmp;
-	j = -1;
-	while(cmd[++j]) //USE FONCTION ACCESS POUR CHECK SI LA CMD EXIST ET LENVOYER A EXECVE
-	{
-		i = -1;
-		while (mypaths[++i])
-		{
-			cmd[j] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
-			if ((tmp = access(cmd[j], X_OK)) == 0)
-				break ;
-		}
-		if (tmp == -1)
-		{
-			write(2, "invalid cmd parent\n", 19);
-			free_all(cmd);
-			free_all(mycmdargs);
-			free_all(mypaths);
-			exit(EXIT_FAILURE);
-		}
-		execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
-	}
-
-	/*
 	j = -1;
 	while(cmd[++j])
 	{
 		i = -1;
 		while (mypaths[++i])
 		{
+			printf("ALLO\n");
 			cmd[j] = ft_join(mypaths[i], mycmdargs[0]); //protect ft_join
-			execve(cmd[j], mycmdargs, envp); //add perror("ERROR") to debug
+			if (access(cmd[j], X_OK) == 0)
+				execve(cmd[j], mycmdargs, envp);
+			else
+				free(mypaths[i]);
 		}
+		free(cmd[j]);
 	}
-	*/
 }
 
 char	**get_path(char *envp[])
@@ -177,7 +137,6 @@ char	**get_path(char *envp[])
 		mypaths[i] = ft_join(mypaths[i], "/");
 		if (!(mypaths[i]))
 			exit(EXIT_FAILURE);
-		printf("paths[i] = %s\n", mypaths[i]);
 	}
 	return (mypaths);
 }
