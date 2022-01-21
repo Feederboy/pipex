@@ -6,7 +6,7 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 13:47:48 by maquentr          #+#    #+#             */
-/*   Updated: 2022/01/20 16:54:23 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/01/21 03:36:51 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void child_process(int fd[2], char **av, char **envp)
 		}
 		free(cmd[j]);
 	}
+	exit(1);
 }
 
 void parent_process(int ac, char **av, char **envp, int fd[2])
@@ -89,7 +90,6 @@ void parent_process(int ac, char **av, char **envp, int fd[2])
 	dup2(fd[0], STDIN_FILENO); //add protection
 	dup2(outfile_fd, STDOUT_FILENO); //add protection
 	close(outfile_fd);
-	close(fd[1]);
 	close(fd[0]);
 	cmd = ft_split(av[3], ' ');
 	if (cmd == NULL)
@@ -113,6 +113,7 @@ void parent_process(int ac, char **av, char **envp, int fd[2])
 		}
 		free(cmd[j]);
 	}
+	exit(1);
 }
 
 char	**get_path(char *envp[])
