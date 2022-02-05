@@ -1,5 +1,0 @@
-This is a sample text file. It contains
-functionality. You can always use grep with any kind of
-data but it works best with text data.
-It supports num 1 2 3 as well as
-ththththth

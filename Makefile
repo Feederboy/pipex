@@ -6,14 +6,14 @@
 #    By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/02 13:05:22 by maquentr          #+#    #+#              #
-#    Updated: 2022/01/20 19:06:24 by matt             ###   ########.fr        #
+#    Updated: 2022/02/05 17:02:08 by maquentr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME=pipex
 
 CC=gcc
 
-CFLAGS=-Wall -Wextra -Werror
+CFLAGS=-g3 -Wall -Wextra -Werror -fsanitize=address
 
 RM=rm -f
 
