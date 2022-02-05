@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 09:30:58 by matt              #+#    #+#             */
-/*   Updated: 2022/01/18 16:39:59 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/02/05 18:48:52 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ char	*ft_join(char const *s1, char const *s2)
 	j = 0;
 	if (!s1 || !s2)
 		return (NULL);
-	if (!(res = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1))))
+	res = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!res)
 		return (NULL);
 	while (s1[i])
 	{
@@ -47,7 +48,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	j = 0;
 	if (!s1 || !s2)
 		return (NULL);
-	if (!(res = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 2))))
+	res = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 2));
+	if (!res)
 		return (NULL);
 	while (s1[i])
 	{
@@ -65,7 +67,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 int	ft_strlen(const char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -75,14 +77,14 @@ int	ft_strlen(const char *str)
 
 char	*ft_strnstr(const char *str, const char *to_find, size_t n)
 {
-	size_t i;
-	size_t j;
+	size_t	i;
+	size_t	j;
 
 	i = 0;
 	if (!str || !to_find)
 		return (NULL);
 	if (to_find[0] == '\0')
-		return (char *)(str);
+		return ((char *)(str));
 	while (str[i] && i < n)
 	{
 		if (str[i] == to_find[0])
@@ -91,7 +93,7 @@ char	*ft_strnstr(const char *str, const char *to_find, size_t n)
 			while (to_find[j] == str[i + j] && i + j < n)
 			{
 				if (to_find[j + 1] == '\0')
-					return (char *)(str + i);
+					return ((char *)(str + i));
 				j++;
 			}
 		}
