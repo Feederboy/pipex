@@ -6,15 +6,11 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 13:47:48 by maquentr          #+#    #+#             */
-/*   Updated: 2022/02/05 18:59:35 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/02/06 15:18:16 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-
-//bugggggggggggggggged SI INFILE INEXISTANTE
-
 
 void	child_process(int fd[2], char **av, char **envp)
 {
@@ -27,6 +23,8 @@ void	child_process(int fd[2], char **av, char **envp)
 		return (perror("Error "));
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(infile_fd, STDIN_FILENO);
+//	close(infile_fd); PEUT ETRE INUTILE CAR DUP CLOSE TOUT SEUL 
+//	close(fd[1]);
 	mycmdargs = ft_split(av[2], ' ');
 	if (mycmdargs == NULL)
 		exit(1);
@@ -78,7 +76,6 @@ void	*get_path(char *envp[], char **mycmdargs)
 	ft_free_double_tab(mypaths);
 	return (NULL);
 }
-
 
 void	pipex(int ac, char **av, char **envp)
 {

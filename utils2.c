@@ -6,7 +6,7 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/05 18:54:53 by maquentr          #+#    #+#             */
-/*   Updated: 2022/02/05 18:58:19 by maquentr         ###   ########.fr       */
+/*   Updated: 2022/02/06 15:18:36 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,18 @@ void	ft_cmd_err(char **mycmdargs)
 void	while_instruc(char **mypaths, char *paths,
 		char **mycmdargs, char **envp)
 {
-	int	i;
+	int		i;
+	char	*tmp;
 
 	i = -1;
 	while (mypaths[++i])
 	{
 		paths = ft_join(mypaths[i], "/");
-		paths = ft_join(paths, mycmdargs[0]);
-		execve(paths, mycmdargs, envp);
+		tmp = ft_join(paths, mycmdargs[0]);
 		free(paths);
-		paths = NULL;
+		execve(tmp, mycmdargs, envp);
+		free(tmp);
+		tmp = NULL;
 	}
 }
 
